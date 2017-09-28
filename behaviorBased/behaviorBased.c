@@ -1,7 +1,21 @@
 #include "structs.h"
 #include "utils.h"
 
+
 extern UCHAR *PsGetProcessImageFileName(IN PEPROCESS Process);;
+
+
+LPSTR GetProcessNameFromPid(HANDLE pid) {
+
+	PEPROCESS Process;
+
+	if (PsLookupProcessByProcessId(pid, &Process) == STATUS_INVALID_PARAMETER) {
+		return "[ SelfProtect ] [ ERROR ]  PID required.";
+	}
+
+	return (LPSTR)PsGetProcessImageFileName(Process);
+
+}
 
 
 VOID OnImageLoadCallback(IN PUNICODE_STRING InFullImageName, IN HANDLE InProcessId, IN PIMAGE_INFO ImageInfo)
@@ -109,8 +123,6 @@ NTSTATUS DefaultPassThrough(PDEVICE_OBJECT DeviceObject, PIRP Irp)
 }
 
 
-
-
 void UnloadDriver(PDRIVER_OBJECT DriverObject)
 {
 	PsRemoveLoadImageNotifyRoutine(OnImageLoadCallback);
@@ -127,6 +139,6 @@ NTSTATUS DriverEntry(_In_ PDRIVER_OBJECT DriverObject, _In_ PUNICODE_STRING Regi
 	
 	DriverObject->DriverUnload = UnloadDriver;
   
-  PsSetLoadImageNotifyRoutine(OnImageLoadCallback);
+  	PsSetLoadImageNotifyRoutine(OnImageLoadCallback);
   
 }
