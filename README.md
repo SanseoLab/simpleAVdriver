@@ -17,3 +17,5 @@ SelfProtect : https://github.com/KKamaa/Driver-Loader/tree/master/ProtectDriver/
 
 RegMonitor : https://github.com/markjandrews/CodeMachineCourse/tree/master/source/kerrkt.labs/labs/HideReg
 
+Communication : http://ericasselin.com/userlandkernel-communication-deviceiocontrol-method
+
