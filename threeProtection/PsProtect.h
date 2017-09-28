@@ -47,7 +47,7 @@ NTSTATUS InstallProcessProtect() {
 		DbgPrint("[ PsProtect ] [ ERROR ] PsSetCreateProcessNotifyRoutineEx Resistering Failed : (%x)\n", Status);
 		return Status;
 	} else {
-    DbgPrint("[ PsProtect ] [ SUCCESS ] PsSetCreateProcessNotifyRoutineEx Resistering Success\n");
+    		DbgPrint("[ PsProtect ] [ SUCCESS ] PsSetCreateProcessNotifyRoutineEx Resistering Success\n");
    }
 
 	return STATUS_SUCCESS;
@@ -55,13 +55,11 @@ NTSTATUS InstallProcessProtect() {
 }
 
 VOID UnInstallProcessProtect() {
-
-	NTSTATUS Status;
-
-	if (!NT_SUCCESS(Status = PsSetCreateProcessNotifyRoutineEx(ProcessNotifyCallbackEx, TRUE)))
-	{
+	
+	if (!NT_SUCCESS(Status = PsSetCreateProcessNotifyRoutineEx(ProcessNotifyCallbackEx, TRUE))) {
 		DbgPrint("[ PsProtect ] [ ERROR ] PsSetCreateProcessNotifyRoutineEx Unresistering Failed : (%x)\n", Status);
 	} else {
-    DbgPrint("[ PsProtect ] [ SUCCESS ] PsSetCreateProcessNotifyRoutineEx Unresistering Success\n");
-   }
+    		DbgPrint("[ PsProtect ] [ SUCCESS ] PsSetCreateProcessNotifyRoutineEx Unresistering Success\n");
+	}
+	
 }
