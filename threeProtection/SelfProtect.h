@@ -5,10 +5,10 @@
 
 
 OB_PREOP_CALLBACK_STATUS	ObjectPreCallBack(IN PVOID RegistrationContext, IN POB_PRE_OPERATION_INFORMATION OperationInformation);
-VOID						ObjectPostCallBack(IN  PVOID RegistrationContext, IN  POB_POST_OPERATION_INFORMATION OperationInformation);
-LPSTR						GetProcessNameFromPid(HANDLE pid);
-NTSTATUS					InstallProcessProtect();
-VOID						UnInstallProcessProtect();
+VOID				ObjectPostCallBack(IN  PVOID RegistrationContext, IN  POB_POST_OPERATION_INFORMATION OperationInformation);
+LPSTR				GetProcessNameFromPid(HANDLE pid);
+NTSTATUS			InstallProcessProtect();
+VOID				UnInstallProcessProtect();
 
 extern UCHAR *PsGetProcessImageFileName(IN PEPROCESS Process);
 
@@ -34,8 +34,7 @@ ObjectPreCallBack(PVOID RegistrationContext, POB_PRE_OPERATION_INFORMATION Opera
 			//DbgPrintEx(DPFLTR_IHVDRIVER_ID, DPFLTR_TRACE_LEVEL,"ObCallbackTest: CBTdPreOperationCallback: ignore process open/duplicate from the protected process itself\n");
 			return OB_PREOP_SUCCESS;
 		}
-	}
-	else if (OperationInformation->ObjectType == *PsThreadType) {
+	} else if (OperationInformation->ObjectType == *PsThreadType) {
 		ProcessIdOfTargetThread = PsGetThreadProcessId((PETHREAD)OperationInformation->Object);
 		if (ProcessIdOfTargetThread == PsGetCurrentProcessId()) {
 			//DbgPrintEx(DPFLTR_IHVDRIVER_ID, DPFLTR_TRACE_LEVEL,"ObCallbackTest: CBTdPreOperationCallback: ignore thread open/duplicate from the protected process itself\n");
@@ -99,6 +98,7 @@ ObjectPreCallBack(PVOID RegistrationContext, POB_PRE_OPERATION_INFORMATION Opera
 			}
 			if ((OriginalDesiredAccess & PROCESS_VM_WRITE) == PROCESS_VM_WRITE) {
 				*DesiredAccess &= ~PROCESS_VM_WRITE;
+				DbgPrint("[ SelfProtect ] [ DuplicateHandleInformation ] Disabling vm write \n");
 			}
 			
 		}
@@ -108,7 +108,6 @@ ObjectPreCallBack(PVOID RegistrationContext, POB_PRE_OPERATION_INFORMATION Opera
 }
 
 VOID ObjectPostCallBack(IN  PVOID RegistrationContext, IN  POB_POST_OPERATION_INFORMATION OperationInformation) {
-	//DbgPrintEx(DPFLTR_IHVDRIVER_ID, DPFLTR_INFO_LEVEL, "Post callback called!. \n");
 }
 
 
@@ -132,11 +131,11 @@ NTSTATUS InstallSelfProtect() {
 	OB_OPERATION_REGISTRATION	OperationRegistration;
 
 	OperationRegistration.ObjectType = PsProcessType;
-	OperationRegistration.Operations = OB_OPERATION_HANDLE_CREATE;			// For creating handle.
+	OperationRegistration.Operations = OB_OPERATION_HANDLE_CREATE;		// For creating handle.
 	OperationRegistration.PreOperation = ObjectPreCallBack;			// Registering Callback function.
 	OperationRegistration.PostOperation = ObjectPostCallBack;
 
-	RtlInitUnicodeString(&CallBackRegistration.Altitude, L"140831");		// I heard that it's meaningless.
+	RtlInitUnicodeString(&CallBackRegistration.Altitude, L"370000");
 	CallBackRegistration.Version = OB_FLT_REGISTRATION_VERSION;
 	CallBackRegistration.OperationRegistrationCount = 1;
 	CallBackRegistration.RegistrationContext = NULL;
@@ -146,6 +145,8 @@ NTSTATUS InstallSelfProtect() {
 	if (!NT_SUCCESS(Status = ObRegisterCallbacks(&CallBackRegistration, &RegistrationHandle))) {
 		DbgPrint("[ SelfProtect ] [ ERROR ] ObRegisterCallbacks Failed : (%x)\n", Status);
 		return Status;
+	} else {
+		DbgPrint("[ SelfProtect ] [ SUCCESS ] ObRegisterCallbacks Success\n");
 	}
 
 	return STATUS_SUCCESS;
