@@ -19,9 +19,7 @@ ULONG g_PolicyKeyCount = sizeof(g_PolicyKeyArray) / sizeof(UNICODE_STRING);
 
 
 BOOLEAN
-CheckProcess(
-	VOID)
-{
+CheckProcess(VOID) {
 	PEPROCESS  Process;
 	PCHAR ImageFileName;
 
@@ -41,8 +39,8 @@ CheckProcess(
 }
 
 
-BOOLEAN
-CheckPolicy(PUNICODE_STRING KeyFullPath) {
+BOOLEAN CheckPolicy(PUNICODE_STRING KeyFullPath) {
+
 	BOOLEAN Matched = FALSE;
 	ULONG Idx;
 
@@ -55,8 +53,7 @@ CheckPolicy(PUNICODE_STRING KeyFullPath) {
 
 	if (Matched) {
 		DbgPrint("[ RegMonitor ] pid(%x) and tid(%x) Block %wZ\n",
-			PsGetCurrentProcessId(), PsGetCurrentThreadId(),
-			KeyFullPath);
+			PsGetCurrentProcessId(), PsGetCurrentThreadId(), KeyFullPath);
 	}
 
 	return Matched;
@@ -166,6 +163,8 @@ NTSTATUS InstallRegMonitor(IN PDRIVER_OBJECT DriverObject)
 	))) {
 		DbgPrint("[ RegMonitor ] [ ERROR ] CmRegisterCallbackEx Failed : (%x)\n", Status);
 		return Status;
+	} else {
+		DbgPrint("[ RegMonitor ] [ SUCCESS ] CmRegisterCallbackEx Success\n");
 	}
 
 	return STATUS_SUCCESS;
@@ -178,5 +177,9 @@ VOID UnInstallRegMonitor()
 
 	if (!NT_SUCCESS(Status = CmUnRegisterCallback(g_GlobalContext.Cookie))) {
 		DbgPrint("[ RegMonitor ] [ ERROR ] CmUnRegisterCallback Failed (%x)\n", Status);
+		return Status;
+	} else {
+		DbgPrint("[ RegMonitor ] [ SUCCESS ] CmUnRegisterCallback Success\n");
 	}
+	return STATUS_SUCCESS;
 }
