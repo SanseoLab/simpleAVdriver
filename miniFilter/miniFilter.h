@@ -77,9 +77,9 @@ FLT_PREOP_CALLBACK_STATUS process_irp(PFLT_CALLBACK_DATA Data,
 	/* Get name information. */
 	if (get_file_name_information(Data, &name_info)) {
 		if (bit == TRUE)
-			DbgPrint("##newDriver [ miniFilter ] [ Writed ] Filename: '%wZ'.", &name_info->Name);
+			DbgPrint("[ miniFilter ] [ Writed ] Filename: '%wZ'.", &name_info->Name);
 		else if (bit == FALSE)
-			DbgPrint("##newDriver [ miniFilter ] [ Deleted ] Filename: '%wZ'.", &name_info->Name);
+			DbgPrint("[ miniFilter ] [ Deleted ] Filename: '%wZ'.", &name_info->Name);
 	}
 
 	return FLT_PREOP_SUCCESS_NO_CALLBACK;
@@ -125,7 +125,7 @@ NTSTATUS FilterUnload(_In_ FLT_FILTER_UNLOAD_FLAGS Flags)
 	PAGED_CODE();
 
 	FltUnregisterFilter(driver_data.filter);
-	DbgPrint("##newDriver [ miniFilter ] Stop Filtering \n");
+	DbgPrint("[ miniFilter ] Stop Filtering \n");
 
 	return STATUS_SUCCESS;
 }
