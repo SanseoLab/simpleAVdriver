@@ -11,13 +11,13 @@ NTSTATUS DriverEntry(PDRIVER_OBJECT DriverObject, PUNICODE_STRING RegistryPath)
 
 	DbgPrint("[ myDriver ] Driver Loaded\n");
 
-  // installing Self Protection
+  	// installing Self Protection
 	InstallSelfProtect();
 
-  // installing Register Monitor
+ 	// installing Register Monitor
 	InstallRegMonitor(DriverObject);
 
-  // installing Process Protection
+ 	// installing Process Protection
 	InstallProcessProtect();
 
 	return Status;
